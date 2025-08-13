@@ -1,0 +1,407 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Matt Godbolt, Paul Malin and Dominic Pajak">
+    <meta name="description" content="Interactive 3D simulation of the BBC Micro">
+    <title>VirtualBeeb - BBC Micro 3D simulation</title>
+    <link rel="stylesheet" href="lib/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="jsbeeb.css" type="text/css">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <script type="text/javascript" src="lib/require.js"></script>
+    <script type="text/javascript">
+        require(['requirejs-common-175f77d00e16b202baa2ffda3e2d8217d60b3d5d'], function() {
+            require(['main-175f77d00e16b202baa2ffda3e2d8217d60b3d5d']);
+        });
+    </script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-C2M0P88RSH"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+
+        gtag('config', 'G-C2M0P88RSH');
+    </script>
+    <style>
+        #loading-spinner {
+            position: absolute;
+            top: 30%;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            text-align: center;
+            color: white;
+        }
+
+        #spinner {
+            display: inline-block;
+            vertical-align: middle;
+            position: relative;
+            overflow: hidden;
+            margin: 32px;
+            height: 160px;
+            width: 160px;
+            animation: spin 2s linear infinite;
+            border: 10px solid #eeeeee;
+            border-top: 10px solid #00000000;
+            border-radius: 50%;
+            z-index: 2;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="loading-spinner">
+        <div id="spinner"></div><br><span id="loading-status">Loading VirtualBeeb...</span></div>
+    <nav id="header-bar" class="navbar navbar-expand-lg not-electron navbar-expand" role="navigation">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav nav mb-2 mb-lg-0">
+
+                    <li class="nav-item dropdown embed-hide">
+                        <a href="#" class="nav-link dropdown-toggle" id="navbarDiscs" role="button" data-bs-toggle="dropdown" aria-expanded="false">Games</a>
+                        <ul class="dropdown-menu dropdown-menu-dark js-header-discs" aria-labelledby="navbarDiscs">
+
+                            <li>
+                                <a data-image="sth:Cheats/CHT_ChuckieEgg-Chukee.zip" class="dropdown-item" data-bs-target="/?&disc1=sth%3ACheats%2FCHT_ChuckieEgg-Chukee.zip&autoboot#">
+                      Chuckie Egg
+                    </a>
+                            </li>
+
+                            <li>
+                                <a data-image="elite.ssd" class="dropdown-item" data-bs-target="/?&disc1=elite.ssd&autoboot">
+                      Elite
+                    </a>
+                            </li>
+
+                            <li>
+                                <a data-image="sth:Aardvark/Frak.zip" class="dropdown-item" data-bs-target="/?&disc1=sth%3AAardvark%2FFrak.zip&autoboot">
+                      Frak
+                    </a>
+                            </li>
+
+                            <li>
+                                <a data-image="sth:Superior/Repton.zip" class="dropdown-item" data-bs-target="?&disc1=sth%3ASuperior%2FRepton.zip&autoboot">
+                      Repton
+                    </a>
+                            </li>
+
+                            <li>
+                                <a data-image="bs-badappl.dsd" class="dropdown-item" data-bs-target="/?&disc1=bs-badappl.dsd&autoboot">
+                      Teletext Bad Apple
+                    </a>
+                            </li>
+
+                            <li>
+                                <a href="#sth" class="dropdown-item sth" data-id="discs" data-bs-toggle="modal" data-bs-target="#sth">Search Games Archive</a>
+                            </li>
+                            <li>
+                                <a href="#discs" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#discs">From examples or local</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item dropdown embed-hide">
+                        <a href="#" class="nav-link dropdown-toggle" id="navbarDisplay" role="button" data-bs-toggle="dropdown" aria-expanded="false">Display</a>
+                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDisplay">
+                            <li>
+                                <div class="dropdown-item">
+                                    <input class="form-check-input" type="checkbox" id="shadows-option" checked="checked">
+                                    <label class="form-check-label" for="flexSwitchCheckDefault">Shadows</label>
+                                </div>
+                                <div class="dropdown-item">
+                                    <input class="form-check-input" type="checkbox" id="dark-option" checked="checked">
+                                    <label class="form-check-label" for="flexSwitchCheckDefault">Dark mode</label>
+                                </div>
+                                <div class="dropdown-item">
+                                    <a href="#" id="cub-option" class="dropdown-item">Monitor focus</a>
+                                </div>
+                                <div class="dropdown-item">
+                                    <input class="form-check-input" type="checkbox" id="green-screen-option">
+                                    <label class="form-check-label" for="flexSwitchCheckDefault">Green Screen</label>
+                                </div>
+                                <div class="dropdown-item">
+                                    <a href="#" id="unpredictable-option" class="dropdown-item">Unpredictable</a>
+                                </div>
+                                <div class="dropdown-item">
+                                    <a href="#" id="fs" class="dropdown-item">Fullscreen</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+
+
+                    <li class="nav-item">
+                        <a id="keys" href="#configuration" class="nav-link" data-bs-toggle="modal" data-bs-target="#configuration">
+                    Keys</a>
+                    </li>
+
+
+                    <li class="nav-item embed-hide">
+                        <a href="#about" class="nav-link" data-bs-toggle="modal" data-bs-target="#info" id="about">
+                      About</a>
+                    </li>
+
+                    <li class="nav-item nav-link">
+                        <a rel="me" href="https://xr.bbcmic.ro/">WebXR beta</a>
+                    </li>
+
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div id="audio-warning" class="alert alert-warning initially-hidden">
+        Your browser has suspended audio -- mouse click or key press for sound.
+    </div>
+
+    <div>
+        <div id="outer">
+            <div id="cub-monitor">
+                <div class="sidebar left"><img src="" alt=""></div>
+                <canvas id="screen" width="896" height="600"></canvas>
+                <div class="sidebar right"><img src="" alt=""></div>
+                <div class="sidebar bottom"><img src="" alt=""></div>
+            </div>
+        </div>
+        <div id="leds">
+            <table>
+                <thead>
+                    <tr>
+                        <th>cassette<br>motor</th>
+                        <th>caps<br>lock</th>
+                        <th>shift<br>lock</th>
+                        <th>drive<br>0/2</th>
+                        <th>drive<br>1/3</th>
+                        <th id="virtual-mhz-header">virtual<br>MHz</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="red led" id="motorlight"></div>
+                        </td>
+                        <td>
+                            <div class="red led" id="capslight"></div>
+                        </td>
+                        <td>
+                            <div class="red led" id="shiftlight"></div>
+                        </td>
+                        <td>
+                            <div class="yellow led" id="drive0"></div>
+                        </td>
+                        <td>
+                            <div class="yellow led" id="drive1"></div>
+                        </td>
+                        <td>
+                            <div class="virtualMHz"></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+        <div class="modal fade" id="info" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="infoModalLabel">About</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div>
+                            <p><span style="font-weight:400">Virtual</span>beeb - beta 0.0.1 December 2021</p>
+                            <p>
+                                An interactive 3D model of the BBC Micro (1981). Choose from 100s of games and experience the sights and sounds of the original hardware. Retrocomputing for the metaverse!
+                            </p>
+
+                            <p>
+                                Created by <a href="https://www.dompajak.com/">Dominic Pajak</a>. Emulator: Matt Godbolt, Shaders: Paul Malin, Models: Ant Mercer<br>This website licensed under CC BY-NC-SA 4.0 and provided without warranty of any kind.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="modal fade" id="discs" tabindex="-1" aria-labelledby="discModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="discModalLabel">Load disc image</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <ul id="disc-list">
+                            <li class="template">
+                                <a href="#"><span class="name"></span></a> - <span class="description"></span>
+                            </li>
+                        </ul>
+                        To load a custom disc image, get an SSD or DSD file and load it below. Search the web, or check somewhere like
+                        <a href="http://www.bbcmicrogames.com/GettingStarted.html">here</a> for these. Be aware the images are usually stored in a ZIP file, and you'll need to unzip first.
+                        <div class="disc">
+                            <label>Load local SSD or DSD file:
+                        <input type="file" id="disc_load" accept=".ssd,.dsd,application/binary">
+                    </label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="modal fade" id="sth" tabindex="-1" aria-labelledby="sthModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="sthModalLabel">
+                            <a href="http://www.bbcmicro.co.uk/">BBC Micro Games Archive</a>
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div style="margin-bottom: 1rem">
+                            <div class="loading">Loading catalog from bbcmicro.co.uk...</div>
+                            <div class="filter">
+                                <label>Filter <input type="text" autofocus id="sth-filter"></label>
+                            </div>
+                        </div>
+                        <ul id="sth-list">
+                            <li class="template"><a href="#"><span class="name"></span></a></li>
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        <label class="float-xs-left checkbox-inline">
+                    <input type="checkbox" class="autoboot" value="">Autoboot</label>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="error-dialog" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="errorModalLabel">An error occurred - sorry!</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div>While <span class="context"></span>:</div>
+                        <div class="error"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="are-you-sure" tabindex="-1" aria-labelledby="aysModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="aysModalLabel">Are You Sure?</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="context"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary ays-no" data-bs-dismiss="modal">No</button>
+                        <button type="button" class="btn btn-primary ays-yes">Yes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="configuration" tabindex="-1" aria-labelledby="configurationModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="configurationModalLabel">Keys</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row g-2 align-items-center">
+                            <h5>Change layout</h5>
+                            <div class="col-auto">
+                            </div>
+                            <div class="col-auto dropdown">
+                                <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" id="keyboardDropdown">
+                            <span class="keyboard-layout">Physical</span>
+                        </button>
+                                <ul class="dropdown-menu dropdown-menu-dark keyboard-menu" role="menu" aria-labelledby="keyboardDropdown">
+                                    <li><a href="#" class="dropdown-item" data-target="physical">Physical: '*' is next to
+                                Enter/Return</a></li>
+                                    <li><a href="#" class="dropdown-item" data-target="natural">Natural: '*' is shift-8</a></li>
+                                    <li><a href="#" class="dropdown-item" data-target="gaming">Gaming: handy for games like
+                                Zalaga</a></li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h5>Keys for Elite</h5>
+                                <p>Hit F10 to launch from the space station, then use
+                                    <,>, S, X and A to fly around.</p>
+                                <h5>Handy key mappings</h5>
+                                <table class="keymap">
+                                    <tr>
+                                        <th>BBC</th>
+                                        <th>PC</th>
+                                        <th>OSX</th>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="function key">F0</span></td>
+                                        <td><span class="key">F10</span></td>
+                                        <td><span class="key">F10</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="key">BREAK</span></td>
+                                        <td><span class="key">F12</span></td>
+                                        <td><span class="key">Right &#8984;</span> + <span class="key">F12</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="key">COPY</span></td>
+                                        <td><span class="key">End</span></td>
+                                        <td><span class="key">Right &#8984;</span> + <span class="key">F11</span></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+</body>
+
+</html>
