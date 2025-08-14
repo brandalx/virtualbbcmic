@@ -10,7 +10,7 @@ define("three-canvas", [
 
   function skyLight() {
     const intensity = 0.11;
-    const skyColor = 0xffffbb;
+    const skyColor = 0xffb158;
     const groundColor = 0x080820;
     return new THREE.HemisphereLight(skyColor, groundColor, intensity);
   }
@@ -235,16 +235,16 @@ define("three-canvas", [
         this.controls.target.set(1, 7, 0);
 
         // Limit zoom
-        this.controls.minDistance = 20; // Minimum zoom distance
-        this.controls.maxDistance = 100; // Maximum zoom distance
+        this.controls.minDistance = 30; // Minimum zoom distance
+        this.controls.maxDistance = 80; // Maximum zoom distance
 
         // Limit vertical rotation to 90 degrees (0 to 90 degrees from vertical)
         this.controls.minPolarAngle = 0; // Radians (0 = straight down)
         this.controls.maxPolarAngle = Math.PI / 2; // Radians (90 degrees = horizontal)
 
         // Limit horizontal rotation to 90 degrees
-        this.controls.minAzimuthAngle = -Math.PI / 4; // -45 degrees
-        this.controls.maxAzimuthAngle = Math.PI / 4; // +45 degrees
+        this.controls.minAzimuthAngle = -Math.PI / 8; // -45 degrees
+        this.controls.maxAzimuthAngle = Math.PI / 8; // +45 degrees
 
         // Optional: Disable panning and enable damping for smoother controls
         this.controls.enablePan = false; // Prevent panning
@@ -336,7 +336,7 @@ define("three-canvas", [
             this.dirLight.intensity = 1.5;
             this.skyLight.intensity = 0.12;
             this.beeb.screenMaterial.envMap = bg.texture;
-            this.scene.background = new THREE.Color("#eeeeee");
+            this.scene.background = new THREE.Color("#ffb158ff");
             this.beebs = [];
             for (let i = 0; i < 100; i++) {
               this.beebs[i] = this.beeb.model.clone();
