@@ -128,10 +128,10 @@
                                     <input class="form-check-input" type="checkbox" id="shadows-option" checked="checked">
                                     <label class="form-check-label" for="flexSwitchCheckDefault">Shadows</label>
                                 </div>
-                                <!-- <div class="dropdown-item">
+                                <div class="dropdown-item">
                                     <input class="form-check-input" type="checkbox" id="dark-option" checked="checked">
                                     <label class="form-check-label" for="flexSwitchCheckDefault">Dark mode</label>
-                                </div> -->
+                                </div>
                                 <div class="dropdown-item">
                                     <a href="#" id="cub-option" class="dropdown-item">Monitor focus</a>
                                 </div>
@@ -156,6 +156,14 @@
                     </li>
 
 
+                    <li class="nav-item embed-hide">
+                        <a href="#about" class="nav-link" data-bs-toggle="modal" data-bs-target="#info" id="about">
+                   About   </a>
+                    </li>
+
+                    <li class="nav-item nav-link d-none">
+                        <a rel="me" href="https://xr.bbcmic.ro/"></a>
+                    </li>
 
 
                 </ul>
@@ -214,7 +222,31 @@
         </div>
 
 
-      
+        <div class="modal fade" id="info" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="infoModalLabel">About</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div>
+                    
+                            <p>
+                             Explore an interactive 3D recreation of the 1981 BBC Micro. Browse through hundreds of classic games and relive the authentic sights and sounds of the original hardware—a retrocomputing experience built for the metaverse. 
+                            </p>
+
+                            <p>
+                               Inspired By Three JS <br>See more models on <a target="_blank"  class="text-primary  link link-underline-primary " href="https://brandnolandev.com/">brandnolandev.com</a>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 
         <div class="modal fade" id="discs" tabindex="-1" aria-labelledby="discModalLabel" aria-hidden="true">
