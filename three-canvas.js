@@ -10,7 +10,7 @@ define("three-canvas", [
 
   function skyLight() {
     const intensity = 0.11;
-    const skyColor = 0xffb158;
+    const skyColor = 0xe99c4f;
     const groundColor = 0x080820;
     return new THREE.HemisphereLight(skyColor, groundColor, intensity);
   }
@@ -273,7 +273,7 @@ define("three-canvas", [
           async function () {
             if ($("#dark-option").is(":checked")) {
               let bg = await this.loadBackgroundTexture(
-                "./virtual-beeb/textures/equirectangular-bg.jpg"
+                "./virtual-beeb/textures/qwantani_sunset_1k.jpg"
               );
               this.dirLight.intensity = 1.1;
               this.skyLight.intensity = 0.11;
@@ -410,7 +410,7 @@ define("three-canvas", [
     async load() {
       $("#loading-status").text("Loading background");
       const bgTarget = await this.loadBackgroundTexture(
-        "./virtual-beeb/textures/equirectangular-bg.jpg"
+        "./virtual-beeb/textures/qwantani_sunset_1k.jpg"
       );
 
       this.beeb = await loadBeeb(bgTarget.texture, this.buffer.dataTexture);
@@ -418,7 +418,7 @@ define("three-canvas", [
       this.scene.add(this.beeb.model);
       this.updateTextureEncoding();
       this.keyboardGroup = this.scene.getObjectByName("KeyboardGroup");
-      this.scene.background = new THREE.Color(0x000000);
+      // this.scene.background = new THREE.Color(0x000000);
 
       this.clickControls = new ClickControls(
         this.canvas,
